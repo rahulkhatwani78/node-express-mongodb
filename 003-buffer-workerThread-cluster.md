@@ -164,6 +164,8 @@ if (cluster.isPrimary) {
 > **Don't confuse Libuv Thread Pool with Worker Threads!**
 >
 > - **Libuv Thread Pool:** Handles native asynchronous tasks like `fs` (file system) and `crypto`. It is managed by C++ and you don't write JS for it.
+> - Even though Node.js already had the libuv thread pool, it only executes native C/C++ asynchronous operations like file system or crypto tasks. It cannot execute JavaScript code in parallel.
 > - **Worker Threads:** Allows **YOU** to run your custom JavaScript logic in parallel.
+> - Worker threads were introduced to allow CPU‑intensive JavaScript tasks to run in separate threads, preventing the main event loop from being blocked and improving application performance.
 
 ---
