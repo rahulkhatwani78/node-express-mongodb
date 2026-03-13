@@ -2,7 +2,8 @@
 
 This document covers the internal workings of Node.js, focusing on the Event Loop phases, the relationship between timers and I/O, and the management of the Libuv Thread Pool.
 
-**Reference:** [Node.js Event Loop, Timers, and nextTick](https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick)
+**Reference Documentation:** [Node.js Event Loop, Timers, and nextTick](https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick)
+**Reference Blog:** [A Complete Visual Guide to Understanding the Node.js Event Loop](https://www.builder.io/blog/visual-guide-to-nodejs-event-loop)
 
 ---
 
@@ -16,6 +17,20 @@ The Event Loop is what allows Node.js to perform non-blocking I/O operations des
 4.  **poll**: Retrieves new I/O events and executes I/O-related callbacks. Node will block here when appropriate.
 5.  **check**: `setImmediate()` callbacks are invoked here.
 6.  **close callbacks**: Executes close event callbacks, e.g., `socket.on('close', ...)`.
+
+![Node.js Internal Working](resources/node-internal-working.png)
+
+1. Any callbacks in the microtask queue are executed. First, tasks in the nextTick queue and only then tasks in the promise queue.
+2. All callbacks within the timer queue are executed (timers phase). These represent expired timer callbacks that are now ready to be processed.
+3. Callbacks in the microtask queue (if present) are executed after every callback in the timer queue. First, tasks in the nextTick queue, and then tasks in the promise queue.
+4. All callbacks within the I/O queue are executed (I/O phase).
+5. Callbacks in the microtask queues (if present) are executed, starting with nextTickQueue and then Promise queue.
+6. All callbacks in the check queue are executed (check phase).
+7. Callbacks in the microtask queues (if present) are executed after every callback in the check queue. First, tasks in the nextTick queue, and then tasks in the promise queue.
+8. All callbacks in the close queue are executed (close callbacks phase).
+9. For one final time in the same loop, the microtask queues are executed. First, tasks in the nextTick queue, and then tasks in the promise queue.
+
+If there are more callbacks to be processed at this point, the loop is kept alive for one more run, and the same steps are repeated. On the other hand, if all callbacks are executed and there is no more code to process, the event loop exits.
 
 ![Node.js Event Loop Process](resources/node-internal-process.png)
 
@@ -103,6 +118,41 @@ fs.readFile(__filename, () => {
 ```text
 immediate
 timeout
+```
+
+#### Example 4: `process.nextTick` vs `Promise`
+
+```javascript
+process.nextTick(() => console.log("this is process.nextTick 1"));
+process.nextTick(() => {
+  console.log("this is process.nextTick 2");
+  process.nextTick(() =>
+    console.log("this is the inner next tick inside next tick"),
+  );
+});
+process.nextTick(() => console.log("this is process.nextTick 3"));
+
+Promise.resolve().then(() => console.log("this is Promise.resolve 1"));
+Promise.resolve().then(() => {
+  console.log("this is Promise.resolve 2");
+  process.nextTick(() =>
+    console.log("this is the inner next tick inside Promise then block"),
+  );
+});
+Promise.resolve().then(() => console.log("this is Promise.resolve 3"));
+```
+
+**Output:**
+
+```text
+this is process.nextTick 1
+this is process.nextTick 2
+this is process.nextTick 3
+this is the inner next tick inside next tick
+this is Promise.resolve 1
+this is Promise.resolve 2
+this is Promise.resolve 3
+this is the inner next tick inside Promise then block
 ```
 
 ---
