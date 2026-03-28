@@ -128,3 +128,11 @@ Distributes data physically across entirely different multiple servers to allevi
   3. **Mongos Router** (The entry point; directs application queries to the right shard).
 - **Shard Keys**: Crucial to how data is split. Using a compound key (`tenantId` + `createdAt`) helps avoid **"Jumbo Chunks"**.
 - **Balancer**: A background background process that continuously watches and migrates chunks across shards to maintain perfectly balanced data distribution without ever causing downtime.
+
+---
+
+## 7. Practical Task Reference
+
+For a comprehensive, hands-on implementation of the concepts covered in Week 4 (including complex MongoDB Aggregations and Replica Set usage), please refer to the practical task link below:
+
+👉 **[Week 4 Practical Task Repository Link](https://github.com/rahulkhatwani78/node-express-mongodb/tree/master/013-week4-practicalTask)**
