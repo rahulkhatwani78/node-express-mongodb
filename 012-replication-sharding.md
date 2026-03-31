@@ -185,7 +185,7 @@ Connect to one of the instances using the MongoDB Shell (`mongosh` or `mongo`) t
 
 ```javascript
 // Connect to the MongoDB shell on the first port
-// $ mongo --port 27018
+$ mongosh --port 27018
 
 // Initiate the replica set with all 3 members configuration
 rs.initiate({
