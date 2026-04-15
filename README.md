@@ -52,3 +52,9 @@ This repository contains documentation and practical code covering Node.js, Expr
 
 *   **[016: Week 5 Revision](./016-week5-revision.md)**  
     Extensive revision of integrating diverse API architectural patterns, templating, and WebSockets.
+
+*   **[017: Redis Fundamentals](./017-redis.md)**  
+    Comprehensive guide on Redis core concepts, data types, Pub-Sub, and integrating performance optimization within Node.js servers.
+
+*   **[018: Redis Caching Strategies, Cache Invalidation & Rate Limiting](./018-cachingStrategies-cacheInvalidation-rateLimiting-in-redis.md)**  
+    Detailed technical guide on implementing advanced caching strategies, effective cache invalidation, and rate limiting using Redis in Node.js/Express.
